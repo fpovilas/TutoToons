@@ -2,12 +2,14 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class JewelHandler : MonoBehaviour
 {
     [Header("Jewels")]
     [SerializeField] private GameObject spawnedJewel;
     [SerializeField] private GameObject clickedJewel;
+    [SerializeField] private TextMeshProUGUI jewelNumber;
 
     //Camera variables
     private Camera mainCamera;

@@ -41,3 +41,12 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Background
+    uniqueID: 1963579871
+    locked: 0
+  - name: Rope
+    uniqueID: 2178372961
+    locked: 0
+  - name: Jewels
+    uniqueID: 4018856961
+    locked: 0
