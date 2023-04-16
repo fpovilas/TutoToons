@@ -1,7 +1,8 @@
 using UnityEngine;
 using System.IO;
+using System;
 
-[System.Serializable]
+[Serializable]
 public class LevelData
 {
     public int[] level_data;
@@ -11,7 +12,7 @@ public class ReadJson : MonoBehaviour
 {
     private string Kelias
     {
-        get { return $"{Application.dataPath}/Scripts/level_data.json"; }
+        get { return $"{Application.dataPath}/Level Data/level_data.json"; }
     }
 
     private string JsonString
