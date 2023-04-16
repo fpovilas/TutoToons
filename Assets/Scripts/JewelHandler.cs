@@ -9,44 +9,39 @@ public class JewelHandler : MonoBehaviour
     [SerializeField] private GameObject spawnedJewel;
     [SerializeField] private GameObject clickedJewel;
 
+    //Camera variables
     private Camera mainCamera;
     private int activeScene;
+
+    //Reading level spawn positions;
     private ReadJson readJson;
 
+    //Getting device resolution
     Vector3 cornerPosition;
     float cornerPositionX;
     float cornerPositionY;
-    private float padding = 5f;
 
     private void Awake()
     {
         readJson = FindObjectOfType<ReadJson>();
         mainCamera = Camera.main;
-
-        cornerPositionX = Screen.currentResolution.width;
-        cornerPositionY = Screen.currentResolution.height;
-        cornerPosition = new Vector3(cornerPositionX, cornerPositionY, 0f);
-
-        cornerPosition = mainCamera.ScreenToWorldPoint(cornerPosition);
-        cornerPositionX = cornerPosition.x;
-        cornerPositionY = cornerPosition.y;
     }
 
     private void Start()
     {
+        SetCornerPositions();
+
         activeScene = SceneManager.GetActiveScene().buildIndex;
 
-        LevelData[] levelData = readJson.LevelData;
+        int[] levelData = readJson.GetCurrentLevelLevelData(activeScene);
 
-        Debug.Log(levelData[3].level_data[0]);
-
-        for(int i = 0; i < levelData[activeScene].level_data.Length; i += 2)
+        for(int i = 0; i < levelData.Length; i += 2)
         {
             SpawnNewJewel(
                 ReturnSpawnPostion
                 (
-                    levelData[activeScene].level_data[i],
-                    levelData[activeScene].level_data[i + 1]
+                    levelData[i],
+                    levelData[i + 1]
                 )
             );
         }
@@ -112,12 +107,23 @@ public class JewelHandler : MonoBehaviour
         //Instantiate(spawnedJewel, jewelPos, transform.rotation);
     }
 
-    float Map(float value, float fromLow, float fromHigh, float toLow, float toHigh)
+    private void SetCornerPositions()
+    {
+        cornerPositionX = Screen.currentResolution.width;
+        cornerPositionY = Screen.currentResolution.height;
+        cornerPosition = new Vector3(cornerPositionX, cornerPositionY, 0f);
+
+        cornerPosition = mainCamera.ScreenToWorldPoint(cornerPosition);
+        cornerPositionX = cornerPosition.x;
+        cornerPositionY = cornerPosition.y;
+    }
+
+    private float Map(float value, float fromLow, float fromHigh, float toLow, float toHigh)
     {
         return (value - fromLow) * (toHigh - toLow) / (fromHigh - toLow) + toLow;
     }
 
-    bool inRange (float value, float lowerRange, float upperRange)
+    private bool inRange (float value, float lowerRange, float upperRange)
     {
         if(lowerRange <= value && upperRange >= value) { return true; }
         else { return false; }

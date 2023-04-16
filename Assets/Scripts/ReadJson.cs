@@ -20,9 +20,14 @@ public class ReadJson : MonoBehaviour
         get { return File.ReadAllText(Kelias); }
     }
 
-    public LevelData[] LevelData
+    private LevelData[] LevelData
     {
         get { return JsonHelper.FromJson<LevelData>(JsonString); }
+    }
+
+    public int[] GetCurrentLevelLevelData(int currentLevel)
+    {
+        return LevelData[currentLevel].level_data;
     }
 
 }
