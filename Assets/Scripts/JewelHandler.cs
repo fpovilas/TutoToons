@@ -9,7 +9,6 @@ public class JewelHandler : MonoBehaviour
     [Header("Jewels")]
     [SerializeField] private GameObject spawnedJewel;
     [SerializeField] private GameObject clickedJewel;
-    [SerializeField] private TextMeshProUGUI jewelNumber;
 
     //Camera variables
     private Camera mainCamera;
@@ -22,6 +21,10 @@ public class JewelHandler : MonoBehaviour
     Vector3 cornerPosition;
     float cornerPositionX;
     float cornerPositionY;
+
+    //Jewels variables
+    private TextMeshProUGUI jewelNumber;
+    private int number = 1;
 
     private void Awake()
     {
@@ -46,6 +49,8 @@ public class JewelHandler : MonoBehaviour
                     levelData[i + 1]
                 )
             );
+            number++;
+            //Debug.Log(FindObjectsOfType<TextMeshProUGUI>().Length);
         }
     }
 
@@ -57,13 +62,14 @@ public class JewelHandler : MonoBehaviour
                 Touchscreen.current.primaryTouch.position.ReadValue();
         Vector3 pasaulioKoordinates = mainCamera.ScreenToWorldPoint(palietimoKoordinates);
 
-        Debug.Log($"Pasaulio: {pasaulioKoordinates}\n Palietimo: {palietimoKoordinates}");
+        //Debug.Log($"Pasaulio: {pasaulioKoordinates}\n Palietimo: {palietimoKoordinates}");
     }
 
     private void SpawnNewJewel(Vector2 koordinates)
     {
         //koordinates.z = 0f;
         GameObject toSpawn = Instantiate(spawnedJewel, koordinates, Quaternion.identity);
+        FindObjectOfType<TextMeshProUGUI>().text = number.ToString();
     }
 
     private Vector2 ReturnSpawnPostion(float posFromFileX, float posFromFileY)
