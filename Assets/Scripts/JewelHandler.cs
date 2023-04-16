@@ -74,8 +74,6 @@ public class JewelHandler : MonoBehaviour
 
     private Vector2 ReturnSpawnPostion(float posFromFileX, float posFromFileY)
     {
-        //float jewelX = levelData[level].level_data[i];
-        //float jewelY = levelData[level].level_data[i + 1];
         Vector2 jewelPos = new Vector2();
 
         if(inRange(posFromFileX, 500f, 1000f) && inRange(posFromFileY, 500f, 1000f))
@@ -108,11 +106,6 @@ public class JewelHandler : MonoBehaviour
         }
 
         return jewelPos;
-
-        //Debug.Log($"{jewelPos} -- ({jewelX}, {jewelY})");
-        //Debug.Log($"{i} -- {levelData[level].level_data.Length}");
-
-        //Instantiate(spawnedJewel, jewelPos, transform.rotation);
     }
 
     private void SetCornerPositions()
