@@ -1,8 +1,9 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    [SerializeField] JewelHandler jewelHandlerPrefab;
+
     JewelHandler jewelHandler;
     SelectedLevel selectedLevel;
 
@@ -12,18 +13,6 @@ public class GameManager : MonoBehaviour
     {
         jewelHandler = FindObjectOfType<JewelHandler>();
         selectedLevel = FindObjectOfType<SelectedLevel>();
-        int numGameSessions = FindObjectsOfType<GameManager>().Length;
-
-        if(numGameSessions > 1)
-        { 
-            Destroy(gameObject);
-            selectedLevel.gameObject.SetActive(false);
-        }
-        else
-        {
-            DontDestroyOnLoad(gameObject);
-            jewelHandler.gameObject.SetActive(true);
-        }
     }
 
     void Start()
@@ -35,14 +24,25 @@ public class GameManager : MonoBehaviour
     {
         if(selectedLevel.isSelected)
         {
-            SceneManager.LoadScene(selectedLevel.SceneToLoad);
+            jewelHandler.gameObject.SetActive(true);
+            selectedLevel.gameObject.SetActive(false);
             selectedLevel.isSelected = false;
         }
     }
 
-    public void ResetGameSession()
+    public void ResetSession()
     {
-        FindObjectOfType<ScenePersist>().ResetScenePersist();
-        Destroy(gameObject);
+        selectedLevel.gameObject.SetActive(true);
+        foreach(var jewel in jewelHandler.jewelObjects)
+        {
+            Destroy(jewel);
+        }
+        foreach(var line in jewelHandler.lineHandler)
+        {
+            Destroy(line);
+        }
+        Destroy(jewelHandler.gameObject);
+        jewelHandler = Instantiate(jewelHandlerPrefab, Vector3.zero, Quaternion.identity);
+        jewelHandler.gameObject.SetActive(false);
     }
 }

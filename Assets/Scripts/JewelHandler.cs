@@ -27,7 +27,7 @@ public class JewelHandler : MonoBehaviour
     //Jewels variables
     private int number = 1;
     private int jewelToTouch = 0;
-    private List<GameObject> jewelObjects;
+    internal List<GameObject> jewelObjects;
     private List<TextMeshProUGUI> jewelNumber;
     private bool[] isPressed;
     private bool isLast = false;
@@ -35,7 +35,7 @@ public class JewelHandler : MonoBehaviour
     //Linehandler
     [Header("Line Handler")]
     [SerializeField] private GameObject lineHandlerPrefab;
-    private List<GameObject> lineHandler;
+    internal List<GameObject> lineHandler;
     private int lineHandlerCounter = 0;
 
     //SelectedLevel
@@ -62,8 +62,8 @@ public class JewelHandler : MonoBehaviour
 
         SetCornerPositions();
 
-        //activeScene = selectedLevel.SceneToLoad;
-        activeScene = SceneManager.GetActiveScene().buildIndex;
+        activeScene = selectedLevel.SceneToLoad;
+        //activeScene = SceneManager.GetActiveScene().buildIndex;
 
         int[] levelData = readJson.GetCurrentLevelLevelData(activeScene);
 
@@ -242,7 +242,7 @@ public class JewelHandler : MonoBehaviour
         yield return new WaitForSecondsRealtime(1f);
         DrawLineFromPointToPoint(lineHandlerCounter, 0);
         yield return new WaitForSecondsRealtime(1f);
-        gameManager.ResetGameSession();
+        gameManager.ResetSession();
     }
 
     private void DrawLineFromPointToPoint(int from, int to)
