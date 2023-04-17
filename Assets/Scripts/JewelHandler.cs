@@ -38,12 +38,20 @@ public class JewelHandler : MonoBehaviour
     private List<GameObject> lineHandler;
     private int lineHandlerCounter = 0;
 
+    //SelectedLevel
+    SelectedLevel selectedLevel;
+
+    //Game Manager
+    GameManager gameManager;
+
     #endregion
 
     private void Awake()
     {
         readJson = FindObjectOfType<ReadJson>();
         mainCamera = Camera.main;
+        selectedLevel = FindObjectOfType<SelectedLevel>();
+        gameManager = FindObjectOfType<GameManager>();
     }
 
     private void Start()
@@ -54,6 +62,7 @@ public class JewelHandler : MonoBehaviour
 
         SetCornerPositions();
 
+        //activeScene = selectedLevel.SceneToLoad;
         activeScene = SceneManager.GetActiveScene().buildIndex;
 
         int[] levelData = readJson.GetCurrentLevelLevelData(activeScene);
@@ -100,6 +109,8 @@ public class JewelHandler : MonoBehaviour
           }
     }
 
+    public int ActiveScene {get; set;}
+
     #region "Jewel methods"
 
     private void SpawnNewJewel(Vector2 koordinates)
@@ -121,25 +132,20 @@ public class JewelHandler : MonoBehaviour
                 Map(posFromFileX, 500f, 1000f, 0f, cornerPositionX),
                 Map(posFromFileY, 0f, 500f, cornerPositionY, 0f)
                             );
-            Debug.Log($"1 -- {jewelPos}");
         }
         else if(inRange(posFromFileX, 0f, 500f) && inRange(posFromFileY, 0f, 500f))
         {
             jewelPos = new Vector2(
                 Map(posFromFileX, 0f, 500f, -cornerPositionX, 0f),
                 Map(posFromFileY, 0f, 500f, cornerPositionY, 0f)
-                            );
-            Debug.Log($"2 -- {jewelPos}");
-            
+                            );            
         }
         else if(inRange(posFromFileX, 0f, 500f) && inRange(posFromFileY, 500f, 1000f))
         {
             jewelPos = new Vector2(
                 Map(posFromFileX, 0f, 500f, -cornerPositionX, 0f),
                 Map(posFromFileY, 500f, 1000f, 0f, -cornerPositionY)
-                            );
-            Debug.Log($"3 -- {jewelPos}");
-            
+                            );            
         }
         else if(inRange(posFromFileX, 500f, 1000f) && inRange(posFromFileY, 500f, 1000f))
         {
@@ -147,7 +153,6 @@ public class JewelHandler : MonoBehaviour
                 Map(posFromFileX, 500f, 1000f, 0f, cornerPositionX),
                 Map(posFromFileY, 500f, 1000f, 0f, -cornerPositionY)
                             );
-            Debug.Log($"4 -- {jewelPos}");
         }
 
         return jewelPos;
@@ -211,12 +216,12 @@ public class JewelHandler : MonoBehaviour
     {
         if(jewelToTouch > 0 && jewelToTouch < lineHandler.Count)
         {
-            DrawLineFromPointToPoint(lineHandlerCounter, jewelToTouch);
+            StartCoroutine(DrawJewels());
         }
 
         if(lineHandlerCounter + 1 == jewelObjects.Count && isLast)
         {
-            DrawLineFromPointToPoint(lineHandlerCounter, 0);
+            StartCoroutine(DrawLastJewel());
         }
 
         if(jewelToTouch + 1 < jewelObjects.Count)
@@ -224,6 +229,20 @@ public class JewelHandler : MonoBehaviour
             jewelToTouch++;
             isLast = true;
         }
+    }
+
+    IEnumerator DrawJewels()
+    {
+        DrawLineFromPointToPoint(lineHandlerCounter, jewelToTouch);
+        yield return new WaitForSecondsRealtime(1f);
+    }
+
+    IEnumerator DrawLastJewel()
+    {
+        yield return new WaitForSecondsRealtime(1f);
+        DrawLineFromPointToPoint(lineHandlerCounter, 0);
+        yield return new WaitForSecondsRealtime(1f);
+        gameManager.ResetGameSession();
     }
 
     private void DrawLineFromPointToPoint(int from, int to)
