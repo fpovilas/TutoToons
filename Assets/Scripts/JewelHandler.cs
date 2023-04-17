@@ -9,8 +9,8 @@ public class JewelHandler : MonoBehaviour
 {
     #region "Variables"
     [Header("Jewels")]
-    [SerializeField] private GameObject spawnedJewel;
-    [SerializeField] private GameObject clickedJewel;
+    [SerializeField] private GameObject spawnedJewelPrefab;
+    [SerializeField] private GameObject clickedJewelPrefab;
 
     //Camera variables
     private Camera mainCamera;
@@ -29,8 +29,14 @@ public class JewelHandler : MonoBehaviour
     private List<GameObject> jewelObjects;
     private bool[] isPressed;
     private int currentJewelToTouch = 0;
-    private int nextJewelToTouch = 1;
     private List<TextMeshProUGUI> jewelNumber;
+    private bool isLast = false;
+
+    //Linehandler
+    [Header("Line Handler")]
+    [SerializeField] private GameObject lineHandlerPrefab;
+    private List<GameObject> lineHandler;
+    private int lineHandlerCounter = 0;
 
     #endregion
 
@@ -44,10 +50,11 @@ public class JewelHandler : MonoBehaviour
     {
         jewelObjects = new List<GameObject>();
         jewelNumber = new List<TextMeshProUGUI>();
+        lineHandler = new List<GameObject>();
 
         SetCornerPositions();
 
-        activeScene = SceneManager.GetActiveScene().buildIndex;
+        activeScene = 3;//SceneManager.GetActiveScene().buildIndex;
 
         int[] levelData = readJson.GetCurrentLevelLevelData(activeScene);
 
@@ -62,8 +69,10 @@ public class JewelHandler : MonoBehaviour
             );
             number++;
             //Debug.Log(FindObjectsOfType<TextMeshProUGUI>().Length);
+            lineHandler.Add(
+                Instantiate(
+                    lineHandlerPrefab, new Vector3(0f, 0f, 0f), Quaternion.identity));
         }
-
         isPressed = new bool[levelData.Length];
     }
 
@@ -73,22 +82,42 @@ public class JewelHandler : MonoBehaviour
 
         Vector2 palietimoKoordinates =
                 Touchscreen.current.primaryTouch.position.ReadValue();
-        Vector3 pasaulioKoordinates = mainCamera.ScreenToWorldPoint(palietimoKoordinates);
+        Vector3 pasaulioKoordinates =
+                mainCamera.ScreenToWorldPoint(palietimoKoordinates);
 
         if((currentJewelToTouch == PressedJewelIndex(pasaulioKoordinates))
             && (isPressed[currentJewelToTouch] == false))
           {
             jewelObjects[currentJewelToTouch].GetComponent<SpriteRenderer>().sprite =
-                clickedJewel.GetComponent<SpriteRenderer>().sprite;
+                clickedJewelPrefab.GetComponent<SpriteRenderer>().sprite;
             isPressed[currentJewelToTouch] = true;
 
             StartCoroutine(Fade(jewelNumber[currentJewelToTouch]));
 
-            if(nextJewelToTouch < jewelObjects.Count)
+            if(currentJewelToTouch > 0 && currentJewelToTouch < lineHandler.Count)
+            {
+                lineHandler[lineHandlerCounter].GetComponent<LineHandler>().DrawLine(
+                    jewelObjects[lineHandlerCounter].transform.position,
+                    jewelObjects[currentJewelToTouch].transform.position);
+                    lineHandlerCounter++;
+            }
+
+            if(lineHandlerCounter + 1 == jewelObjects.Count && isLast)
+            {
+                lineHandler[lineHandlerCounter].GetComponent<LineHandler>().DrawLine(
+                    jewelObjects[lineHandlerCounter].transform.position,
+                    jewelObjects[0].transform.position);
+                    lineHandlerCounter++;
+            }
+
+            //Debug.Log($"{jewelObjects[currentJewelToTouch].transform.position} ?? {jewelObjects[nextJewelToTouch].transform.position}");
+
+            if(currentJewelToTouch + 1 < jewelObjects.Count)
             {
                 currentJewelToTouch++;
-                nextJewelToTouch++;
+                isLast = true;
             }
+            //Debug.Log($"{currentJewelToTouch} {nextJewelToTouch}");
           }
         //Debug.Log($"Pasaulio: {pasaulioKoordinates}\n Palietimo: {palietimoKoordinates}");
         //Debug.Log($"{distance}");
@@ -100,7 +129,7 @@ public class JewelHandler : MonoBehaviour
     private void SpawnNewJewel(Vector2 koordinates)
     {
         //koordinates.z = 0f;
-        GameObject toSpawn = Instantiate(spawnedJewel, koordinates, Quaternion.identity);
+        GameObject toSpawn = Instantiate(spawnedJewelPrefab, koordinates, Quaternion.identity);
         FindObjectOfType<TextMeshProUGUI>().text = number.ToString();
         jewelObjects.Add(toSpawn);
         jewelNumber.Add(FindObjectOfType<TextMeshProUGUI>());
