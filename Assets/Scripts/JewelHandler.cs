@@ -26,10 +26,10 @@ public class JewelHandler : MonoBehaviour
 
     //Jewels variables
     private int number = 1;
+    private int jewelToTouch = 0;
     private List<GameObject> jewelObjects;
-    private bool[] isPressed;
-    private int currentJewelToTouch = 0;
     private List<TextMeshProUGUI> jewelNumber;
+    private bool[] isPressed;
     private bool isLast = false;
 
     //Linehandler
@@ -54,7 +54,7 @@ public class JewelHandler : MonoBehaviour
 
         SetCornerPositions();
 
-        activeScene = 3;//SceneManager.GetActiveScene().buildIndex;
+        activeScene = SceneManager.GetActiveScene().buildIndex;
 
         int[] levelData = readJson.GetCurrentLevelLevelData(activeScene);
 
@@ -65,63 +65,39 @@ public class JewelHandler : MonoBehaviour
                 (
                     levelData[i],
                     levelData[i + 1]
-                )
-            );
+                ));
+
             number++;
-            //Debug.Log(FindObjectsOfType<TextMeshProUGUI>().Length);
             lineHandler.Add(
-                Instantiate(
-                    lineHandlerPrefab, new Vector3(0f, 0f, 0f), Quaternion.identity));
+                        Instantiate(
+                                    lineHandlerPrefab,
+                                    new Vector3(0f, 0f, 0f),
+                                    Quaternion.identity));
         }
+
         isPressed = new bool[levelData.Length];
+
     }
 
     private void Update()
     {
         if(!Touchscreen.current.primaryTouch.press.isPressed) { return; }
 
-        Vector2 palietimoKoordinates =
+        Vector2 touchCoordinates =
                 Touchscreen.current.primaryTouch.position.ReadValue();
-        Vector3 pasaulioKoordinates =
-                mainCamera.ScreenToWorldPoint(palietimoKoordinates);
+        Vector3 worldSpaceCoordinates =
+                mainCamera.ScreenToWorldPoint(touchCoordinates);
 
-        if((currentJewelToTouch == PressedJewelIndex(pasaulioKoordinates))
-            && (isPressed[currentJewelToTouch] == false))
+        if((jewelToTouch == PressedJewelIndex(worldSpaceCoordinates))
+            && (isPressed[jewelToTouch] == false))
           {
-            jewelObjects[currentJewelToTouch].GetComponent<SpriteRenderer>().sprite =
-                clickedJewelPrefab.GetComponent<SpriteRenderer>().sprite;
-            isPressed[currentJewelToTouch] = true;
+            ChangeJewelSprite();
+            isPressed[jewelToTouch] = true;
 
-            StartCoroutine(Fade(jewelNumber[currentJewelToTouch]));
+            StartCoroutine(Fade(jewelNumber[jewelToTouch]));
 
-            if(currentJewelToTouch > 0 && currentJewelToTouch < lineHandler.Count)
-            {
-                lineHandler[lineHandlerCounter].GetComponent<LineHandler>().DrawLine(
-                    jewelObjects[lineHandlerCounter].transform.position,
-                    jewelObjects[currentJewelToTouch].transform.position);
-                    lineHandlerCounter++;
-            }
-
-            if(lineHandlerCounter + 1 == jewelObjects.Count && isLast)
-            {
-                lineHandler[lineHandlerCounter].GetComponent<LineHandler>().DrawLine(
-                    jewelObjects[lineHandlerCounter].transform.position,
-                    jewelObjects[0].transform.position);
-                    lineHandlerCounter++;
-            }
-
-            //Debug.Log($"{jewelObjects[currentJewelToTouch].transform.position} ?? {jewelObjects[nextJewelToTouch].transform.position}");
-
-            if(currentJewelToTouch + 1 < jewelObjects.Count)
-            {
-                currentJewelToTouch++;
-                isLast = true;
-            }
-            //Debug.Log($"{currentJewelToTouch} {nextJewelToTouch}");
+            CheckHowToDrawAndDraw();
           }
-        //Debug.Log($"Pasaulio: {pasaulioKoordinates}\n Palietimo: {palietimoKoordinates}");
-        //Debug.Log($"{distance}");
-        //if(distance < jewelObjects[0].GetComponent<CircleCollider2D>().radius) {Debug.Log("Touched");}
     }
 
     #region "Jewel methods"
@@ -184,6 +160,12 @@ public class JewelHandler : MonoBehaviour
         return -1;
     }
 
+    private void ChangeJewelSprite()
+    {
+        jewelObjects[jewelToTouch].GetComponent<SpriteRenderer>().sprite =
+                clickedJewelPrefab.GetComponent<SpriteRenderer>().sprite;
+    }
+
     #endregion
 
     #region "Generic methods"
@@ -217,6 +199,33 @@ public class JewelHandler : MonoBehaviour
             textToFade.alpha = alpha;
             yield return new WaitForSeconds(.1f);
         }
+    }
+
+    private void CheckHowToDrawAndDraw()
+    {
+        if(jewelToTouch > 0 && jewelToTouch < lineHandler.Count)
+        {
+            DrawLineFromPointToPoint(lineHandlerCounter, jewelToTouch);
+        }
+
+        if(lineHandlerCounter + 1 == jewelObjects.Count && isLast)
+        {
+            DrawLineFromPointToPoint(lineHandlerCounter, 0);
+        }
+
+        if(jewelToTouch + 1 < jewelObjects.Count)
+        {
+            jewelToTouch++;
+            isLast = true;
+        }
+    }
+
+    private void DrawLineFromPointToPoint(int from, int to)
+    {
+        lineHandler[from].GetComponent<LineHandler>().DrawLine(
+            jewelObjects[from].transform.position,
+            jewelObjects[to].transform.position);
+        lineHandlerCounter++;
     }
 
     #endregion
