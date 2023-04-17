@@ -7,16 +7,11 @@ public class GameManager : MonoBehaviour
     JewelHandler jewelHandler;
     SelectedLevel selectedLevel;
 
-    public int Find { get; private set; }
-
     private void Awake()
     {
         jewelHandler = FindObjectOfType<JewelHandler>();
         selectedLevel = FindObjectOfType<SelectedLevel>();
-    }
 
-    void Start()
-    {
         jewelHandler.gameObject.SetActive(false);
     }
 

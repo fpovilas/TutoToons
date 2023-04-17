@@ -188,8 +188,8 @@ public class JewelHandler : MonoBehaviour
         cornerPosition = new Vector3(cornerPositionX, cornerPositionY, 0f);
 
         cornerPosition = mainCamera.ScreenToWorldPoint(cornerPosition);
-        cornerPositionX = cornerPosition.x;
-        cornerPositionY = cornerPosition.y;
+        cornerPositionX = cornerPosition.x - 1f;
+        cornerPositionY = cornerPosition.y - 1f;
     }
 
     private float Map(float value, float fromLow, float fromHigh, float toLow, float toHigh)
