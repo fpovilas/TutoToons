@@ -76,6 +76,10 @@ crashlytics-build.properties
 /[Aa]ssets/[Tt]utorialInfo/*
 /[Aa]ssets/[Rr]eadme.asset
 /[Aa]ssets/[Rr]eadme.asset.meta
+/[Aa]ssets/[Ee]ditor/*.meta
+/[Aa]ssets/[Ee]ditor/com.unity.mobile.notifications/*.meta
+/[Aa]ssets/[Aa]daptive [Pp]erformance/*.meta
+/[Aa]ssets/[Aa]daptive [Pp]erformance/[Ss]ettings/*.meta
 
 # Asset meta files
 /[Aa]ssets/*.meta
@@ -83,6 +87,7 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]cripts/*.meta
 /[Aa]ssets/[Ss]cenes/*.unity.meta
 /[Aa]ssets/[Ll]evels/*.unity.meta
+/[Aa]ssets/[Ll]evel [Dd]ata/*.meta
 /[Aa]ssets/[Pp]refabs/*.prefab.meta
 /[Aa]ssets/[Tt]iles/*.meta
 /[Aa]ssets/[Tt]extMesh Pro/*.meta
