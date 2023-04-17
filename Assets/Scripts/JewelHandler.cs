@@ -1,4 +1,4 @@
-using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -25,6 +25,7 @@ public class JewelHandler : MonoBehaviour
     //Jewels variables
     private TextMeshProUGUI jewelNumber;
     private int number = 1;
+    private List<GameObject> jewelObjects;
 
     private void Awake()
     {
@@ -34,6 +35,7 @@ public class JewelHandler : MonoBehaviour
 
     private void Start()
     {
+        jewelObjects = new List<GameObject>();
         SetCornerPositions();
 
         activeScene = SceneManager.GetActiveScene().buildIndex;
@@ -62,7 +64,13 @@ public class JewelHandler : MonoBehaviour
                 Touchscreen.current.primaryTouch.position.ReadValue();
         Vector3 pasaulioKoordinates = mainCamera.ScreenToWorldPoint(palietimoKoordinates);
 
-        //Debug.Log($"Pasaulio: {pasaulioKoordinates}\n Palietimo: {palietimoKoordinates}");
+        float distance = Vector2.Distance(pasaulioKoordinates, jewelObjects[0].transform.position);
+
+        Debug.Log($"Pasaulio: {pasaulioKoordinates}\n Palietimo: {palietimoKoordinates}");
+        Debug.Log($"{distance}");
+
+        if(distance < jewelObjects[0].GetComponent<CircleCollider2D>().radius)
+        {Debug.Log("Touched");}
     }
 
     private void SpawnNewJewel(Vector2 koordinates)
@@ -70,6 +78,7 @@ public class JewelHandler : MonoBehaviour
         //koordinates.z = 0f;
         GameObject toSpawn = Instantiate(spawnedJewel, koordinates, Quaternion.identity);
         FindObjectOfType<TextMeshProUGUI>().text = number.ToString();
+        jewelObjects.Add(toSpawn);
     }
 
     private Vector2 ReturnSpawnPostion(float posFromFileX, float posFromFileY)
