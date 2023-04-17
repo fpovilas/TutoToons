@@ -115,33 +115,39 @@ public class JewelHandler : MonoBehaviour
     {
         Vector2 jewelPos = new Vector2();
 
-        if(inRange(posFromFileX, 500f, 1000f) && inRange(posFromFileY, 500f, 1000f))
+        if(inRange(posFromFileX, 500f, 1000f) && inRange(posFromFileY, 0f, 500f))
         {
             jewelPos = new Vector2(
-            Map(posFromFileX, 500f, 1000f, 0f, cornerPositionX),
-            Map(posFromFileY, 500f, 1000f, 0f, cornerPositionY)
+                Map(posFromFileX, 500f, 1000f, 0f, cornerPositionX),
+                Map(posFromFileY, 0f, 500f, cornerPositionY, 0f)
                             );
+            Debug.Log($"1 -- {jewelPos}");
+        }
+        else if(inRange(posFromFileX, 0f, 500f) && inRange(posFromFileY, 0f, 500f))
+        {
+            jewelPos = new Vector2(
+                Map(posFromFileX, 0f, 500f, -cornerPositionX, 0f),
+                Map(posFromFileY, 0f, 500f, cornerPositionY, 0f)
+                            );
+            Debug.Log($"2 -- {jewelPos}");
+            
         }
         else if(inRange(posFromFileX, 0f, 500f) && inRange(posFromFileY, 500f, 1000f))
         {
             jewelPos = new Vector2(
-            Map(posFromFileX, 0f, -500f, 0f, cornerPositionX),
-            Map(posFromFileY, 500f, 1000f, 0f, cornerPositionY)
+                Map(posFromFileX, 0f, 500f, -cornerPositionX, 0f),
+                Map(posFromFileY, 500f, 1000f, 0f, -cornerPositionY)
                             );
+            Debug.Log($"3 -- {jewelPos}");
+            
         }
-        else if(inRange(posFromFileX, 0f, 500f) && inRange(posFromFileY, 0f, 500f))
-        {
-         jewelPos = new Vector2(
-         Map(posFromFileX, 0f, -500f, 0f, cornerPositionX),
-         Map(posFromFileY, 0f, -500f, 0f, cornerPositionY)
-                            );
-        }
-        else if(inRange(posFromFileX, 500f, 1000f) && inRange(posFromFileY, 0f, 500f))
+        else if(inRange(posFromFileX, 500f, 1000f) && inRange(posFromFileY, 500f, 1000f))
         {
             jewelPos = new Vector2(
-            Map(posFromFileX, 500f, 1000f, 0f, cornerPositionX),
-            Map(posFromFileY, 0f, -500f, 0f, cornerPositionY)
+                Map(posFromFileX, 500f, 1000f, 0f, cornerPositionX),
+                Map(posFromFileY, 500f, 1000f, 0f, -cornerPositionY)
                             );
+            Debug.Log($"4 -- {jewelPos}");
         }
 
         return jewelPos;
@@ -183,7 +189,7 @@ public class JewelHandler : MonoBehaviour
 
     private float Map(float value, float fromLow, float fromHigh, float toLow, float toHigh)
     {
-        return (value - fromLow) * (toHigh - toLow) / (fromHigh - toLow) + toLow;
+        return (value - fromLow) * (toHigh - toLow) / (fromHigh - fromLow) + toLow;
     }
 
     private bool inRange (float value, float lowerRange, float upperRange)
