@@ -3,9 +3,11 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using TMPro;
+using System.Collections;
 
 public class JewelHandler : MonoBehaviour
 {
+    #region "Variables"
     [Header("Jewels")]
     [SerializeField] private GameObject spawnedJewel;
     [SerializeField] private GameObject clickedJewel;
@@ -23,9 +25,14 @@ public class JewelHandler : MonoBehaviour
     float cornerPositionY;
 
     //Jewels variables
-    private TextMeshProUGUI jewelNumber;
     private int number = 1;
     private List<GameObject> jewelObjects;
+    private bool[] isPressed;
+    private int currentJewelToTouch = 0;
+    private int nextJewelToTouch = 1;
+    private List<TextMeshProUGUI> jewelNumber;
+
+    #endregion
 
     private void Awake()
     {
@@ -36,6 +43,8 @@ public class JewelHandler : MonoBehaviour
     private void Start()
     {
         jewelObjects = new List<GameObject>();
+        jewelNumber = new List<TextMeshProUGUI>();
+
         SetCornerPositions();
 
         activeScene = SceneManager.GetActiveScene().buildIndex;
@@ -54,6 +63,8 @@ public class JewelHandler : MonoBehaviour
             number++;
             //Debug.Log(FindObjectsOfType<TextMeshProUGUI>().Length);
         }
+
+        isPressed = new bool[levelData.Length];
     }
 
     private void Update()
@@ -64,14 +75,27 @@ public class JewelHandler : MonoBehaviour
                 Touchscreen.current.primaryTouch.position.ReadValue();
         Vector3 pasaulioKoordinates = mainCamera.ScreenToWorldPoint(palietimoKoordinates);
 
-        float distance = Vector2.Distance(pasaulioKoordinates, jewelObjects[0].transform.position);
+        if((currentJewelToTouch == PressedJewelIndex(pasaulioKoordinates))
+            && (isPressed[currentJewelToTouch] == false))
+          {
+            jewelObjects[currentJewelToTouch].GetComponent<SpriteRenderer>().sprite =
+                clickedJewel.GetComponent<SpriteRenderer>().sprite;
+            isPressed[currentJewelToTouch] = true;
 
-        Debug.Log($"Pasaulio: {pasaulioKoordinates}\n Palietimo: {palietimoKoordinates}");
-        Debug.Log($"{distance}");
+            StartCoroutine(Fade(jewelNumber[currentJewelToTouch]));
 
-        if(distance < jewelObjects[0].GetComponent<CircleCollider2D>().radius)
-        {Debug.Log("Touched");}
+            if(nextJewelToTouch < jewelObjects.Count)
+            {
+                currentJewelToTouch++;
+                nextJewelToTouch++;
+            }
+          }
+        //Debug.Log($"Pasaulio: {pasaulioKoordinates}\n Palietimo: {palietimoKoordinates}");
+        //Debug.Log($"{distance}");
+        //if(distance < jewelObjects[0].GetComponent<CircleCollider2D>().radius) {Debug.Log("Touched");}
     }
+
+    #region "Jewel methods"
 
     private void SpawnNewJewel(Vector2 koordinates)
     {
@@ -79,6 +103,7 @@ public class JewelHandler : MonoBehaviour
         GameObject toSpawn = Instantiate(spawnedJewel, koordinates, Quaternion.identity);
         FindObjectOfType<TextMeshProUGUI>().text = number.ToString();
         jewelObjects.Add(toSpawn);
+        jewelNumber.Add(FindObjectOfType<TextMeshProUGUI>());
     }
 
     private Vector2 ReturnSpawnPostion(float posFromFileX, float posFromFileY)
@@ -117,6 +142,23 @@ public class JewelHandler : MonoBehaviour
         return jewelPos;
     }
 
+    private int PressedJewelIndex(Vector2 touchCoordinates)
+    {
+        float distance;
+        int index = 0;
+        foreach(var jewel in jewelObjects)
+        {
+            distance = Vector2.Distance(touchCoordinates, jewel.transform.position);
+            if(distance < jewel.GetComponent<CircleCollider2D>().radius) { return index;}
+            else { index++; }
+        }
+        return -1;
+    }
+
+    #endregion
+
+    #region "Generic methods"
+    
     private void SetCornerPositions()
     {
         cornerPositionX = Screen.currentResolution.width;
@@ -138,4 +180,15 @@ public class JewelHandler : MonoBehaviour
         if(lowerRange <= value && upperRange >= value) { return true; }
         else { return false; }
     }
+
+    IEnumerator Fade(TextMeshProUGUI textToFade)
+    {
+        for(float alpha = 1f; alpha >= 0; alpha -= 0.1f)        
+        {
+            textToFade.alpha = alpha;
+            yield return new WaitForSeconds(.1f);
+        }
+    }
+
+    #endregion
 }
