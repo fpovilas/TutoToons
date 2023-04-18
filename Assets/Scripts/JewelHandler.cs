@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 using TMPro;
 using System.Collections;
 
@@ -43,6 +42,7 @@ public class JewelHandler : MonoBehaviour
 
     //Game Manager
     GameManager gameManager;
+    bool isLoaded = false;
 
     #endregion
 
@@ -59,37 +59,14 @@ public class JewelHandler : MonoBehaviour
         jewelObjects = new List<GameObject>();
         jewelNumber = new List<TextMeshProUGUI>();
         lineHandler = new List<GameObject>();
-
-        SetCornerPositions();
-
-        activeScene = selectedLevel.SceneToLoad;
-        //activeScene = SceneManager.GetActiveScene().buildIndex;
-
-        int[] levelData = readJson.GetCurrentLevelLevelData(activeScene);
-
-        for(int i = 0; i < levelData.Length; i += 2)
-        {
-            SpawnNewJewel(
-                ReturnSpawnPostion
-                (
-                    levelData[i],
-                    levelData[i + 1]
-                ));
-
-            number++;
-            lineHandler.Add(
-                        Instantiate(
-                                    lineHandlerPrefab,
-                                    new Vector3(0f, 0f, 0f),
-                                    Quaternion.identity));
-        }
-
-        isPressed = new bool[levelData.Length];
-
     }
 
     private void Update()
     {
+        if(selectedLevel.SceneToLoad != -1 && !isLoaded)
+        {
+            LoadLevel();
+        }
         if(!Touchscreen.current.primaryTouch.press.isPressed) { return; }
 
         Vector2 touchCoordinates =
@@ -251,6 +228,33 @@ public class JewelHandler : MonoBehaviour
             jewelObjects[from].transform.position,
             jewelObjects[to].transform.position);
         lineHandlerCounter++;
+    }
+
+    private void LoadLevel()
+    {
+        SetCornerPositions();
+        activeScene = selectedLevel.SceneToLoad;
+        int[] levelData = readJson.GetCurrentLevelLevelData(activeScene);
+
+        for(int i = 0; i < levelData.Length; i += 2)
+        {
+            SpawnNewJewel(
+                ReturnSpawnPostion
+                (
+                    levelData[i],
+                    levelData[i + 1]
+                ));
+
+            number++;
+            lineHandler.Add(
+                        Instantiate(
+                                    lineHandlerPrefab,
+                                    new Vector3(0f, 0f, 0f),
+                                    Quaternion.identity));
+        }
+
+        isPressed = new bool[levelData.Length];
+        isLoaded = true;
     }
 
     #endregion

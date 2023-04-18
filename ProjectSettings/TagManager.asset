@@ -44,6 +44,9 @@ TagManager:
   - name: Background
     uniqueID: 1963579871
     locked: 0
+  - name: LevelSelect
+    uniqueID: 3323450653
+    locked: 0
   - name: Rope
     uniqueID: 2178372961
     locked: 0

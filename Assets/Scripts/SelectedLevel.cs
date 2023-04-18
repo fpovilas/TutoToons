@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class SelectedLevel : MonoBehaviour
 {
-    private int sceneToLoad;
+    private int sceneToLoad = -1;
     public bool isSelected = false;
 
     public int SceneToLoad

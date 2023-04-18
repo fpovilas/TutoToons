@@ -11,7 +11,10 @@ public class GameManager : MonoBehaviour
     {
         jewelHandler = FindObjectOfType<JewelHandler>();
         selectedLevel = FindObjectOfType<SelectedLevel>();
+    }
 
+    private void Start()
+    {
         jewelHandler.gameObject.SetActive(false);
     }
 

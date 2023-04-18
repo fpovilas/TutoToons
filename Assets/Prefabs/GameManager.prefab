@@ -44,3 +44,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2effe14b2b2a92849bf9a029c83befad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  jewelHandlerPrefab: {fileID: 0}
