@@ -13,7 +13,8 @@ public class ReadJson : MonoBehaviour
     private string Kelias
     {
         //$"{Application.streamingAssetsPath}/Level Data/level_data.json";
-        get { return $"{Application.dataPath}/Level Data/level_data.json"; }
+        //$"{Application.dataPath}/Level Data/level_data.json";
+        get { return Path.Combine(Application.streamingAssetsPath, "Level Data", "level_data.json");}
     }
 
     private string JsonString

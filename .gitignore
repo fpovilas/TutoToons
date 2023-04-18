@@ -94,3 +94,5 @@ crashlytics-build.properties
 /[Aa]ssets/[Aa]nimations/*.meta
 /[Aa]ssets/[Mm]aterials/*.meta
 /[Aa]ssets/[Ii]nput [Ss]ystem/*.meta
+/[Aa]ssets/[Ss]treaming[Aa]ssets/*.meta
+/[Aa]ssets/[Ss]treaming[Aa]ssets/[Ll]evel [Dd]ata/*.meta
